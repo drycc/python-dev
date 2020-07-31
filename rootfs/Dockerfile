@@ -1,4 +1,4 @@
-FROM quay.io/drycc/base:v0.3.6
+FROM ubuntu:20.04
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-pip

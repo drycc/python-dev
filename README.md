@@ -1,7 +1,5 @@
 # drycc/python-dev
 
-[![Build Status](https://travis-ci.org/drycc/docker-python-dev.svg?branch=master)](https://travis-ci.org/drycc/docker-python-dev) [![Docker Repository on Quay](https://quay.io/repository/drycc/python-dev/status "Docker Repository on Quay")](https://quay.io/repository/drycc/python-dev)
-
 A [Python 3][] language development toolbox.
 
 Some [Drycc Workflow][] components use this Docker image as a standard build and test environment,
@@ -24,16 +22,12 @@ Here's an example of running `flake8` for drycc/dockerbuilder:
 $ docker run --rm \
    --volume `pwd`/rootfs:/app \
    --workdir /app \
-   quay.io/drycc/python-dev:latest \
+   drycc/python-dev:latest \
    flake8 --show-source --config=setup.cfg .
 ```
 
 The latest drycc/python-dev Docker image is available at:
 
-* [Quay.io][]
-  ```
-  docker pull quay.io/drycc/python-dev
-  ```
 
 * [Docker Hub][]
   ```
@@ -49,5 +43,4 @@ The latest drycc/python-dev Docker image is available at:
 [codecov]: https://codecov.io/
 [coverage]: https://coverage.readthedocs.io
 [flake8]: https://gitlab.com/pycqa/flake8
-[Quay.io]: https://quay.io
 [shellcheck]: https://github.com/koalaman/shellcheck
