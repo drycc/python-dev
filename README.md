@@ -16,7 +16,7 @@ creating [issues][] and submitting [pull requests][].
 ## Usage
 
 Mount your local Python code into the container to run one of the included tools or scripts.
-Here's an example of running `flake8` for drycc/dockerbuilder:
+Here's an example of running `flake8` for drycc/imagebuilder:
 
 ```console
 $ docker run --rm \
