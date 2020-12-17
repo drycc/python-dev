@@ -1,7 +1,4 @@
-FROM ubuntu:20.04
-
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    python3-pip
+FROM python:3.8-alpine
 
 COPY . /
 
