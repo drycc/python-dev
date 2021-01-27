@@ -3,7 +3,7 @@ language: generic
 services:
   - docker
 
-script: make build
+script: DEV_REGISTRY="docker.io" make build
 
 deploy:
   provider: script
