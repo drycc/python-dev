@@ -1,6 +1,8 @@
-FROM docker.io/library/python:3.8-alpine
+FROM docker.io/library/python:3.9-alpine
 
 COPY . /
 
-RUN pip3 install --disable-pip-version-check --no-cache-dir -r dev_requirements.txt
+RUN apk add curl bash \
+  && curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash \
+  && pip3 install --disable-pip-version-check --no-cache-dir -r dev_requirements.txt
 
