@@ -1,0 +1,95 @@
+kind: pipeline
+type: docker
+name: linux-amd64
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+- name: publish
+  image: docker.io/library/docker:dind
+  privileged: true
+  commands:
+  - nohup dockerd &
+  - apk add make bash curl
+  - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+  - make build push
+  environment:
+    VERSION: ${DRONE_TAG:-latest}-linux-amd64
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+
+---
+kind: pipeline
+type: docker
+name: linux-arm64
+
+platform:
+  arch: arm64
+  os: linux
+
+steps:
+- name: publish
+  image: docker.io/library/docker:dind
+  privileged: true
+  commands:
+  - nohup dockerd &
+  - apk add make bash curl
+  - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+  - make build push
+  environment:
+    VERSION: ${DRONE_TAG:-latest}-linux-arm64
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+
+---
+kind: pipeline
+type: docker
+name: manifest
+
+steps:
+- name: manifest
+  image: docker.io/library/alpine
+  commands:
+  - sed -i "s/docker.io/$${DRYCC_REGISTRY}/g" .drone/manifest.tmpl
+  environment:
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+
+- name: publish
+  image: plugins/manifest
+  settings:
+    spec: .drone/manifest.tmpl
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  environment:
+    DEV_REGISTRY:
+      from_secret: dev_registry
+
+  when:
+    event:
+    - push
+    - tag
+
+depends_on:
+- linux-amd64
+- linux-arm64
