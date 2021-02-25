@@ -8,11 +8,10 @@ platform:
 
 steps:
 - name: publish
-  image: docker.io/library/docker:dind
+  image: docker.io/drycc/go-dev
+  pull: if-not-exists
   privileged: true
   commands:
-  - nohup dockerd &
-  - apk add make bash curl
   - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
   - make build push
   environment:
@@ -27,6 +26,14 @@ steps:
     event:
     - push
     - tag
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+volumes:
+- name: image_registries
+  host:
+    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
@@ -39,11 +46,10 @@ platform:
 
 steps:
 - name: publish
-  image: docker.io/library/docker:dind
+  image: docker.io/drycc/go-dev
+  pull: if-not-exists
   privileged: true
   commands:
-  - nohup dockerd &
-  - apk add make bash curl
   - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
   - make build push
   environment:
@@ -58,6 +64,14 @@ steps:
     event:
     - push
     - tag
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+volumes:
+- name: image_registries
+  host:
+    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
