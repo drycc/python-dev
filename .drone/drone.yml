@@ -1,5 +1,5 @@
 kind: pipeline
-type: docker
+type: exec
 name: linux-amd64
 
 platform:
@@ -8,9 +8,6 @@ platform:
 
 steps:
 - name: publish
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
   - make build push
@@ -26,18 +23,10 @@ steps:
     event:
     - push
     - tag
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
-
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
-type: docker
+type: exec
 name: linux-arm64
 
 platform:
@@ -46,9 +35,6 @@ platform:
 
 steps:
 - name: publish
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
   - make build push
@@ -64,14 +50,6 @@ steps:
     event:
     - push
     - tag
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
-
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
