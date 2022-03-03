@@ -20,8 +20,8 @@ Here's an example of running `flake8` for drycc/imagebuilder:
 
 ```console
 $ docker run --rm \
-   --volume `pwd`/rootfs:/app \
-   --workdir /app \
+   --volume `pwd`/rootfs:/workspace \
+   --workdir /workspace \
    drycc/python-dev:latest \
    flake8 --show-source --config=setup.cfg .
 ```
