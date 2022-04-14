@@ -1,7 +1,8 @@
 VERSION ?= $(shell git describe --tags --exact-match 2>/dev/null || echo latest)
-REGISTRY ?=
+DEV_REGISTRY ?= registry.drycc.cc
+DRYCC_REGISTRY ?= ${DEV_REGISTRY}
 IMAGE_PREFIX ?= drycc
-IMAGE := ${DEV_REGISTRY}/${IMAGE_PREFIX}/python-dev:${VERSION}
+IMAGE := ${DRYCC_REGISTRY}/${IMAGE_PREFIX}/python-dev:${VERSION}
 PLATFORM ?= linux/amd64,linux/arm64
 
 build:
