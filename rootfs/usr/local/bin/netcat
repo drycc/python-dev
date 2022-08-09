@@ -3,15 +3,18 @@ import sys
 import time
 import getopt
 import socket
+import contextlib
 
 from urllib import parse
+from urllib.request import urlopen
 
 
 usage = """
-usage: netcat [-h help] [-s separator] [-a address] [-u url] [-f frequency]
+usage: netcat [-h help] [-s separator] [-a address] [-u url] [-g get] [-f frequency]
 
 netcat -s , -a 192.168.1.100:80,192.168.1002:80 -f 100
-netcat -s , -u https://baidu.com,redis://10.1.0.2:5432
+netcat -s , -u postgres://baidu.com,redis://10.1.0.2:5432
+netcat -s , -g https://www.baidu.com,https://www.taobao.com
 """
 
 
@@ -27,7 +30,7 @@ DEFAULT_SCHEME_PORTS = {
 def netcat_addrs(addrs, separator, frequency, verbose):
     for addr in addrs.split(separator):
         ip, port = addr.split(":")
-        while True:
+        for _ in range(frequency):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(2)
             try:
@@ -39,13 +42,23 @@ def netcat_addrs(addrs, separator, frequency, verbose):
                     print(f"netcat: connect to {ip} port {port} failed: {e}")
                 else:
                     print(f"netcat: connect to {ip} port {port} failed!")
-                if frequency == 0:
-                    break
             finally:
                 sock.close()
-            frequency = frequency -1
             time.sleep(1)
 
+def netcat_gets(urls, separator, frequency, verbose):
+    for url in urls.split(separator):
+        for _ in range(frequency):
+            try:
+                with contextlib.closing(urlopen(url)) as response:
+                    print(f"Connection to {url} succeeded, status: {response.status}")
+                    break
+            except BaseException as e:
+                if verbose:
+                    print(f"netcat: connect to {url} failed: {e}")
+                else:
+                    print(f"netcat: connect to {url} failed!")
+            time.sleep(1)
 
 def netcat_urls(urls, separator, frequency, verbose):
     addrs = []
@@ -74,16 +87,18 @@ def main():
     try:
         options, _ = getopt.getopt(
             sys.argv[1:],
-            "hva:u:s:f:",
-            ['help', 'verbose', "address=", "url=", "separator=", "frequency="]
+            "hva:u:g:s:f:",
+            ['help', 'verbose', "address=", "url=", "get=", "separator=", "frequency="]
         )
         verbose, frequency = False, int(time.time())
-        addrs, urls, separator = None, None, ","
+        addrs, urls, gets, separator = None, None, None, ","
         for name, value in options:
             if name in ('-a', '--address'):
                 addrs = value
             elif name in ('-u', '--url'):
                 urls = value
+            elif name in ('-g', '--get'):
+                gets = value
             elif name in ('-s', '--separator'):
                 separator = value
             elif name in ('-f', '--frequency'):
@@ -94,6 +109,8 @@ def main():
             lambda x: x.strip('"').strip("'") if x else x,
             (addrs, urls)
         )
+        if gets:
+            netcat_gets(gets, separator, frequency, verbose)
         if addrs:
             netcat_addrs(addrs, separator, frequency, verbose)
         if urls:
