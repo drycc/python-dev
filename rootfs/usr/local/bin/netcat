@@ -10,7 +10,8 @@ from urllib.request import urlopen
 
 
 usage = """
-usage: netcat [-h help] [-s separator] [-a address] [-u url] [-g get] [-f frequency]
+usage: netcat [-h help] [-s separator] [-a address] [-u url]
+              [-g get] [-f frequency]
 
 netcat -s , -a 192.168.1.100:80,192.168.1002:80 -f 100
 netcat -s , -u postgres://baidu.com,redis://10.1.0.2:5432
@@ -46,12 +47,18 @@ def netcat_addrs(addrs, separator, frequency, verbose):
                 sock.close()
             time.sleep(1)
 
+
 def netcat_gets(urls, separator, frequency, verbose):
     for url in urls.split(separator):
         for _ in range(frequency):
             try:
                 with contextlib.closing(urlopen(url)) as response:
-                    print(f"Connection to {url} succeeded, status: {response.status}")
+                    print(
+                        "Connection to %s succeeded, status: %s" % (
+                            url,
+                            response.status
+                        )
+                    )
                     break
             except BaseException as e:
                 if verbose:
@@ -59,6 +66,7 @@ def netcat_gets(urls, separator, frequency, verbose):
                 else:
                     print(f"netcat: connect to {url} failed!")
             time.sleep(1)
+
 
 def netcat_urls(urls, separator, frequency, verbose):
     addrs = []
@@ -88,7 +96,8 @@ def main():
         options, _ = getopt.getopt(
             sys.argv[1:],
             "hva:u:g:s:f:",
-            ['help', 'verbose', "address=", "url=", "get=", "separator=", "frequency="]
+            ['help', 'verbose', "address=", "url=", "get=",
+                "separator=", "frequency="]
         )
         verbose, frequency = False, int(time.time())
         addrs, urls, gets, separator = None, None, None, ","

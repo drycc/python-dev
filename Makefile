@@ -14,3 +14,6 @@ buildx:
 
 push: build
 	docker push ${IMAGE}
+
+test: build
+	docker run --rm ${IMAGE} flake8 /usr/local/bin/netcat
