@@ -1,4 +1,5 @@
-FROM registry.drycc.cc/drycc/base:bookworm
+ARG CODENAME
+FROM registry.drycc.cc/drycc/base:${CODENAME}
 
 COPY . /
 ENV PIP_DISABLE_ROOT_WARNING 1

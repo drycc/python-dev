@@ -6,11 +6,11 @@ IMAGE := ${DRYCC_REGISTRY}/${IMAGE_PREFIX}/python-dev:${VERSION}
 PLATFORM ?= linux/amd64,linux/arm64
 
 build:
-	docker build -t ${IMAGE} rootfs
+	docker build --build-arg CODENAME=${CODENAME} -t ${IMAGE} rootfs
 
 
 buildx:
-	docker buildx build --platform ${PLATFORM} -t ${IMAGE} rootfs --push
+	docker buildx build --build-arg CODENAME=${CODENAME} --platform ${PLATFORM} -t ${IMAGE} rootfs --push
 
 push: build
 	docker push ${IMAGE}
