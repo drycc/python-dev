@@ -6,14 +6,10 @@ IMAGE := ${DRYCC_REGISTRY}/${IMAGE_PREFIX}/python-dev:${VERSION}
 PLATFORM ?= linux/amd64,linux/arm64
 
 build:
-	docker build --build-arg CODENAME=${CODENAME} -t ${IMAGE} rootfs
-
-
-buildx:
-	docker buildx build --build-arg CODENAME=${CODENAME} --platform ${PLATFORM} -t ${IMAGE} rootfs --push
+	podman build --build-arg CODENAME=${CODENAME} -t ${IMAGE} rootfs
 
 push: build
-	docker push ${IMAGE}
+	podman push ${IMAGE}
 
 test: build
-	docker run --rm ${IMAGE} flake8 /usr/local/bin/netcat
+	podman run --rm ${IMAGE} flake8 /usr/local/bin/netcat
