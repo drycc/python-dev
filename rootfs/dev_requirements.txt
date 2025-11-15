@@ -1,4 +1,4 @@
-codecov-cli==11.2.0
-coverage==7.10.6
+codecov-cli==11.2.5
+coverage==7.11.3
 flake8==7.3.0
 hatchling==1.27.0
